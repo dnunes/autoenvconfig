@@ -33,11 +33,11 @@ In your code:
 
 ## Conventions
 
-### Magic Loading<a id="magicload"></a>
+### <a id="magicload">Magic Loading</a>
 
 For the magic load to happen, your [`config.schema`](#sampleschema) and [`ENVNAME.json`](#sampleenv) files must have a "path" key with the path of your project's root. It will find the correct environment checking this value by default. You can, however, safely ignore this convention and manually specify the file name.
 
-### Schema and and Environment File formats<a id="magicload"></a>
+### <a id="magicload">Schema and and Environment File formats</a>
 The schema and environment config files are simple JSON files. The only limit for the _keys_ is the dot character ("`.`") which is forbidden (because it is used as a separator when loading), but I suggest you to limit your keys to alphanumeric chars for simplicity.
 
 In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indicating mandatory or optional key, respectively.
@@ -45,7 +45,7 @@ In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indica
 
 ## Sample Files
 
-### Sample config.schema<a id="sampleschema"></a>
+### <a id="sampleschema">Sample config.schema</a>
 
     {
       "# id": "",
@@ -63,7 +63,7 @@ In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indica
 
 You can have a required key inside an optional object (in this sample, the `supported` required key is inside optional `deep` and `key` objects), so that you can omit the whole object (it will use the defaults), but if it exists in the environment config file, it must contain at least these required keys.
 
-### Sample ENVNAME.json<a id="sampleenv"></a>
+### <a id="sampleenv">Sample ENVNAME.json</a>
 
     {
       "id": "dev",
@@ -75,7 +75,7 @@ You can have a required key inside an optional object (in this sample, the `supp
 
 
 
-## Advanced Usage
+## <a id="advancedusage">Advanced Usage</a>
 
 You can override the default file and bypass the environment file search routine by calling the `load` method:
 
