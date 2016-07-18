@@ -14,7 +14,7 @@ AutoEnvConfig was designed with simple but very powerful goals:
 Create your schema specifying optional and required keys (plus: it can contain default values, too!), setup your environment file with specific overrides and you're good to go.
 
 
-## Basic Usage
+## <a id="basicusage">Basic Usage</a>
 
 There is just four steps needed to start using this package:
 
@@ -25,13 +25,14 @@ There is just four steps needed to start using this package:
 
 In your code:
 
-    const AutoEnvConfig = require('autoenvconfig');
-    
-    let valueFromConfig = AutoEnvConfig.get('deep.key.supported'));
-    console.log(valueFromConfig); //"myValue"
+```javascript
+const AutoEnvConfig = require('autoenvconfig');
 
+let valueFromConfig = AutoEnvConfig.get('deep.key.supported'));
+console.log(valueFromConfig); //"myValue"
+```
 
-## Conventions
+## <a id="conventions">Conventions</a>
 
 ### <a id="magicload">Magic Loading</a>
 
@@ -43,68 +44,74 @@ The schema and environment config files are simple JSON files. The only limit fo
 In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indicating mandatory or optional key, respectively.
 
 
-## Sample Files
+## <a id="samples">Sample Files</a>
 
 ### <a id="sampleschema">Sample config.schema</a>
+```json
+{
+  "# id": "",
+  "# envtype": "",
+  "# path": "",
 
-    {
-      "# id": "",
-      "# envtype": "",
-      "# path": "",
-
-      "# requiredKey": "",
-      "? deep": {
-        "? key": {
-          "# supported": "myValue",
-          "? asWell": "otherValue"
-        }
-      }
+  "# requiredKey": "",
+  "? deep": {
+    "? key": {
+      "# supported": "myValue",
+      "? asWell": "otherValue"
     }
+  }
+}
+```
 
 You can have a required key inside an optional object (in this sample, the `supported` required key is inside optional `deep` and `key` objects), so that you can omit the whole object (it will use the defaults), but if it exists in the environment config file, it must contain at least these required keys.
 
 ### <a id="sampleenv">Sample ENVNAME.json</a>
+```json
+{
+  "id": "dev",
+  "envtype": "local",
+  "path": "/home/dnunes/code/node/autoenvconfig",
 
-    {
-      "id": "dev",
-      "envtype": "local",
-      "path": "/home/dnunes/code/node/autoenvconfig",
-
-      "requiredKey": "value"
-    }
+  "requiredKey": "value"
+}
+```
 
 
 
 ## <a id="advancedusage">Advanced Usage</a>
 
 You can override the default file and bypass the environment file search routine by calling the `load` method:
-
-    //will load envs/other.json
-    AutoEnvConfig = require('autoenvconfig').load('other');
-    AutoEnvConfig.get('ket.in.other.file');
-
+```javascript
+//will load envs/other.json
+AutoEnvConfig = require('autoenvconfig').load('other');
+AutoEnvConfig.get('ket.in.other.file');
+```
 
 You can also load multiple configs if ever needed:
+```javascript
+AutoEnvConfig = require('autoenvconfig');
 
-    AutoEnvConfig = require('autoenvconfig');
+//load the right env based on "path" config value
+let rightConfig = AutoEnvConfig.load();
+rightConfig.get('key.in.right.file');
 
-  //load the right env based on "path" config value
-    let rightConfig = AutoEnvConfig.load();
-    rightConfig.get('key.in.right.file');
-    
-    //load "envs/other.json"
-    let otherConfig = AutoEnvConfig.load('other');
-    otherConfig.get('key.in.other.file');
-    
-    //load "envs/oneMore.json"
-    let oneMoreConfig = rightConfig .load('oneMore.json');
-    oneMoreConfig.get('key.in.onemore.file');
+//load "envs/other.json"
+let otherConfig = AutoEnvConfig.load('other');
+otherConfig.get('key.in.other.file');
 
+//load "envs/oneMore.json"
+let oneMoreConfig = rightConfig .load('oneMore.json');
+oneMoreConfig.get('key.in.onemore.file');
+```
 Note that you can call `load` directly on the package or on any `AutoEnvConfig` object returned by the `load` method.
 
 
+## <a id="releaseh">Release History</a>
 
-## Credits
+* 0.1.0 Initial release
+
+
+## <a id="credits">Credits</a>
 
 Created and maintained (with much ♡) by [diego nunes](http://dnunes.com)
 

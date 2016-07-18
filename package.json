@@ -1,11 +1,16 @@
 {
   "name": "autoenvconfig",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Env config that Just Works™!",
+  "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
+  "homepage": "https://github.com/dnunes/autoenvconfig/",
+
+
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
+
   "keywords": [
     "multiple",
     "env",
@@ -18,10 +23,15 @@
     "12fact",
     "12factor"
   ],
-  "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
-  "license": "ISC",
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^2.5.3"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dnunes/autoenvconfig/"
+  },
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/dnunes/autoenvconfig/blob/master/LICENSE"
+    }
+  ]
 }
