@@ -1,0 +1,27 @@
+{
+  "name": "autoenvconfig",
+  "version": "0.0.1",
+  "description": "Env config that Just Works™!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "multiple",
+    "env",
+    "config",
+    "envconfig",
+    "auto",
+    "automatic",
+    "load",
+    "loader",
+    "12fact",
+    "12factor"
+  ],
+  "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}
