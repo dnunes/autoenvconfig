@@ -165,14 +165,15 @@ let publicFuncs = {
       if (!match) { return false; }
       saveAsDefault = true;
     }
-    let currentEnvConfig = new EnvConfig(envID);
+    let envConfigObj = new EnvConfig(envID);
     if (!forceNew) {
-      cache[envID] = currentEnvConfig;
+      cache[envID] = envConfigObj;
     }
     if (saveAsDefault) {
-      cache[''] = currentEnvConfig;
+      cache[''] = envConfigObj;
     }
-    return currentEnvConfig;
+    if (!autoInstance) { autoInstance = envConfigObj; }
+    return envConfigObj;
   },
 
   'get': function (key) {

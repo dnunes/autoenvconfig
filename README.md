@@ -108,6 +108,8 @@ Note that you can call `load` directly on the package or on any `AutoEnvConfig` 
 
 ## <a id="releaseh">Release History</a>
 
+* 0.1.1 Bugfix for using natural expected behavior after .load('name');
+
 * 0.1.0 Initial release
 
 
