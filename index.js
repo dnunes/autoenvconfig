@@ -22,6 +22,11 @@ let _ = {
         throw new Error(
           'There is no "'+ name +'.schema" file in your envs folder!'
         );
+      } else if (SyntaxError && err instanceof SyntaxError) {
+        throw new Error(
+          'There is a syntax error in your schema file "'+ schemaPath +'": '+
+          '"'+ err.message +'". Please fix it and try again.'
+        );
       }
       throw err;
     }

@@ -1,6 +1,6 @@
 {
   "name": "autoenvconfig",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Env config that Just Works™!",
   "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "https://github.com/dnunes/autoenvconfig/",
