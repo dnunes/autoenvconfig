@@ -1,16 +1,13 @@
 {
   "name": "autoenvconfig",
-  "version": "0.1.2",
-  "description": "Env config that Just Works™!",
+  "version": "0.1.3",
+  "description": "Environment config that Just Works™!",
   "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "https://github.com/dnunes/autoenvconfig/",
-
-
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
-
   "keywords": [
     "multiple",
     "env",

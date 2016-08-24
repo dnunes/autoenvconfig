@@ -5,7 +5,13 @@ const
 , path = require('path')
 ;
 
+let autoInstance = null;
 let _ = {
+  'ensureAutoInstance': function (instance) {
+    if (autoInstance) { return; }
+    autoInstance = instance || publicFuncs.load();
+  },
+
   'configPath': path.resolve(path.dirname(require.main.filename), 'envs'),
   'getConfigFile': function (id) {
     return path.resolve(_.configPath, id);
@@ -39,7 +45,7 @@ let _ = {
     return false;
   },
 
-  'cleanSchema': function (schema, prefix) {
+  'getCleanSchema': function (schema, prefix) {
     let key, val, prefixedEnvKey, clean = {};
     for (key in schema) { val = schema[key];
       prefixedEnvKey = prefix + key;
@@ -52,7 +58,7 @@ let _ = {
       let isArr = (val instanceof Array);
       let isObj = (val instanceof Object);
       if (isObj && !isArr) {
-        val = _.cleanSchema(val, key + '.');
+        val = _.getCleanSchema(val, key + '.');
       }
       clean[key.substring(2)] = val;
     }
@@ -145,7 +151,6 @@ let _ = {
 };
 
 let cache = {};
-let autoInstance = null;
 let publicFuncs = {
   'load': function (envID, forceNew) {
     if (!envID) { envID = ''; }
@@ -177,16 +182,17 @@ let publicFuncs = {
     if (saveAsDefault) {
       cache[''] = envConfigObj;
     }
+    _.ensureAutoInstance(envConfigObj);
     if (!autoInstance) { autoInstance = envConfigObj; }
     return envConfigObj;
   },
 
-  'get': function (key) {
-    if (!autoInstance) { autoInstance = publicFuncs.load(); }
-    return autoInstance.value(key);
+  'has': function (key) { _.ensureAutoInstance();
+    return autoInstance.has(key);
   },
-  'g': function (key) { return publicFuncs.g(key); },
-  'value': function (key) { return publicFuncs.g(key); }
+  'get': function (key, def) { _.ensureAutoInstance();
+    return autoInstance.get(key, def);
+  }
 };
 
 
@@ -199,11 +205,11 @@ class EnvConfig {
 
     let schema = _.getSchema();
     _.validateConfig(schema, currentEnvFile);
-    let defaultData = _.cleanSchema(schema);
+    let defaultData = _.getCleanSchema(schema);
     this.currentConfig = _.supermerge(defaultData, currentEnvFile);
   }
 
-  value(key) {
+  has(key) {
     let toRet = this.currentConfig;
     let parts = key.split('.');
     let i, cur;
@@ -211,6 +217,20 @@ class EnvConfig {
       cur = parts[i];
       toRet = toRet[cur];
       if (typeof(toRet) == 'undefined') {
+        return false;
+      }
+    }
+    return true;
+  }
+  get(key, def) {
+    let toRet = this.currentConfig;
+    let parts = key.split('.');
+    let i, cur;
+    for (i in parts) {
+      cur = parts[i];
+      toRet = toRet[cur];
+      if (typeof(toRet) == 'undefined') {
+        if (typeof(def) != 'undefined') { return def; }
         throw new Error(
           'Can\'t find key "'+ key +'" on current env config ("'+ this.id +'")!'
         );

@@ -1,10 +1,12 @@
 autoenvconfig
 ============
-Environment config that Just Works™!
+### Environment config that Just Works™!
 
 Stop worrying about the hassle of **loading environment config files everywhere**, **config files with missing entries** or **schemas that gets old when you forget to add a new config key to it**.
 
-AutoEnvConfig was designed with simple but very powerful goals:
+**AutoEnvConfig** is a no-nonsense, no-dependencies package to help you keep your ever expanding project under control.
+
+**AutoEnvConfig** was designed with simple but very powerful goals:
 
 * **Blazing fast**: it caches everything it can, loads your files only once and check your schema on load, not on usage;
 * **No extra configuration needed**: this package follows the idea of _convention over configuration_, so it keeps the required environment files to a minimum and there is nothing to thinker with before start using it;
@@ -108,11 +110,13 @@ Note that you can call `load` directly on the package or on any `AutoEnvConfig` 
 
 ## <a id="releaseh">Release History</a>
 
-* 0.1.2 Improved syntaxerror handling in schema files
+* 0.1.3 Removed "get" aliases, fixed "instance.get()" and added "has" method;
+
+* 0.1.2 Improved syntaxerror handling in schema files;
 
 * 0.1.1 Bugfix for using natural expected behavior after .load('name');
 
-* 0.1.0 Initial release
+* 0.1.0 Initial release.
 
 
 ## <a id="credits">Credits</a>
