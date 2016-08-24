@@ -6,7 +6,7 @@
   "homepage": "https://github.com/dnunes/autoenvconfig/",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha -c --check-leaks --reporter spec"
   },
   "keywords": [
     "multiple",
@@ -30,5 +30,10 @@
       "type": "MIT",
       "url": "https://github.com/dnunes/autoenvconfig/blob/master/LICENSE"
     }
-  ]
+  ],
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
+    "sinon": "^1.17.5"
+  }
 }
