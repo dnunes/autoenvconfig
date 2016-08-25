@@ -45,9 +45,8 @@ before(() => {
   });
 
   //Loading schema and env config JSON files
-  sandbox.stub(_, 'loadJSON', function (filepath) {
+  sandbox.stub(_, 'loadAndParseJSON', function (filepath) {
     let filename = filepath.split(path.sep).pop();
-    filename = _.ensureExtension(filename);
     let fileContent = mockFiles[filename];
     return JSON.parse(fileContent);
   });
