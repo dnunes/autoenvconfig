@@ -53,7 +53,7 @@ before(() => {
 });
 
 //# Reset on each test
-afterEach(() => AutoEnvConfig._cleanup()); //reset autoInstance
+afterEach(() => AutoEnvConfig._reset()); //reset autoInstance and cache
 
 //# Cleanup
 after(() => {
@@ -140,18 +140,18 @@ describe('Magic Loading', function() {
   });
 });
 
-describe('Instance Methods', function() {
-  it('"instance.has" should return true when key is present');
-  it('"instance.has" should return false when key is not present');
-
-  it('"instance.get" should return value when key is present');
-  it('"instance.get" should throw when key is not present');
-});
-
 describe('Magic Methods', function() {
   it('magic "module.has" should return true when key is present');
   it('magic "module.has" should return false when key is not present');
 
   it('magic "module.get" should return value when key is present');
   it('magic "module.get" should throw when key is not present');
+});
+
+describe('Instance Methods', function() {
+  it('"instance.has" should return true when key is present');
+  it('"instance.has" should return false when key is not present');
+
+  it('"instance.get" should return value when key is present');
+  it('"instance.get" should throw when key is not present');
 });
