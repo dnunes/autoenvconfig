@@ -63,6 +63,15 @@ after(() => {
 
 
 //### Tests :)
+describe('Error Handling', function() {
+  it('throw exception when no ".schema" is present');
+  it('throw exception when ".schema" is invalid');
+  it('throw exception when ".schema" have keys without required prefix');
+  it('throw exception when ".conf" have properties not present in ".schema"');
+  it('throw exception when ".conf" does not have some required property');
+});
+
+
 describe('Specific Loading', function() {
   it('should load <name> when using "module.load(name)"', function () {
     let specificInstance = AutoEnvConfig.load('env1');
