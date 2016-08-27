@@ -1,0 +1,13 @@
+{
+  "id": "env1",
+  "envtype": "staging",
+  "path": "/some/random/path",
+
+  "requiredKey": "value1",
+  "deep": {
+    "key": {
+      "supported": ":)"
+    }
+  },
+  "arr": []
+}

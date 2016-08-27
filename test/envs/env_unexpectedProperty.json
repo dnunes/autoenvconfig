@@ -1,0 +1,14 @@
+{
+  "id": "envUnexpected",
+  "envtype": "production",
+  "path": "/some/random/path",
+
+  "requiredKey": "valueUnexpected",
+  "deep": {
+    "key": {
+      "supported": ":)",
+      "unexpected": "this is not on schema!"
+    }
+  },
+  "arr": []
+}
