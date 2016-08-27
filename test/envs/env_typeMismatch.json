@@ -1,0 +1,13 @@
+{
+  "id": "envMismatch",
+  "envtype": "staging",
+  "path": "/some/random/path",
+
+  "requiredKey": "value1",
+  "deep": {
+    "key": "this should be an object"
+
+
+  },
+  "arr": []
+}
