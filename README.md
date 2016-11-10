@@ -102,7 +102,7 @@ All the methods can be called in a specific instance (from a `AutoEnvConfig.load
 ### <a id="magicmethods">Magic Methods</a>
 
 - <a id="mautoload">`AutoEnvConfig.load([<envName>])`</a>
-This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you supply an `<envName>` parameter, it will not try to [_magic load_](#magicload) it and just return the config for the specified env.
+This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you ommit the `<envName>` parameter, it will try to [_magic load_](#magicload) it. If you pass the `<envName>` parameter, it will just return the config for the specified env. It returns false if it cannot find an environment config.
 
 - <a id="mautoget">`AutoEnvConfig.get(<key>[, <defaultValueIfNotPresent>])`</a>
 This method will return the value of `<key>` in the [_magic instance_](#magicload). If `key` is not present in the [_magic instance_](#magicload), it will either return `<defaultValueIfNotPresent>` or throw an error if there the default value parameter was committed.
@@ -116,8 +116,8 @@ This method will replace the contents of `<key>` for the [_magic instance_](#mag
 
 ### <a id="instancemethods">Instance Methods</a>
 
-- <a id="mautoload">`AutoEnvConfig.load([<envName>])`</a>
-This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you supply an `<envName>` parameter, it will not try to [_magic load_](#magicload) it and just return the config for the specified env.
+- <a id="mautoload">`<Instance>.load([<envName>])`</a>
+This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you ommit the `<envName>` parameter, it will try to [_magic load_](#magicload) it. If you pass the `<envName>` parameter, it will just return the config for the specified env. It returns false if it cannot find an environment config.
 
 - <a id="minsget">`<Instance>.get(<key>[, <defaultValueIfNotPresent>])`</a>
 This method will return the value of `<key>` in the `<Instance>` object. If `<key>` is not present in the `<Instance>` object, it will either return `<defaultValueIfNotPresent>` or throw an error if there the default value parameter was committed.
