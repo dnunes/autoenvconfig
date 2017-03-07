@@ -199,7 +199,30 @@ describe('Magic Loading', function() {
   });
 });
 
-describe('Magic Methods', function() {
+describe('Instance Load and Magic Load equivalence', function() {
+  it('"instance" load object should be the same as "magic" load object', function () {
+    let magicInstance  = AutoEnvConfig.load();
+    let specificInstance = AutoEnvConfig.load('magic.json');
+    expect(magicInstance).to.be.equal(specificInstance);
+  });
+  it('"instance.has" should be the same as "module.has"', function () {
+    let magicInstance  = AutoEnvConfig.load();
+    let specificInstance = AutoEnvConfig.load('magic.json');
+    expect(magicInstance.has).to.be.equal(specificInstance.has);
+  });
+  it('"instance.get" should be the same as "module.get"', function () {
+    let magicInstance  = AutoEnvConfig.load();
+    let specificInstance = AutoEnvConfig.load('magic.json');
+    expect(magicInstance.get).to.be.equal(specificInstance.get);
+  });
+  it('"instance.set" should be the same as "module.set"', function () {
+    let magicInstance  = AutoEnvConfig.load();
+    let specificInstance = AutoEnvConfig.load('magic.json');
+    expect(magicInstance.set).to.be.equal(specificInstance.set);
+  });
+});
+
+describe('Methods', function() {
   it('magic "module.has(key)" should return true when key is present', function () {
     let hasMagicKey = AutoEnvConfig.has('requiredKey');
     expect(hasMagicKey).to.be.true;
@@ -223,40 +246,5 @@ describe('Magic Methods', function() {
   it('magic "module.get(key, default)" should return default it is supplied and key is not present', function () {
     let magicKey = AutoEnvConfig.get('nonexistentKey', 'defaultValue');
     expect(magicKey).to.be.equal('defaultValue');
-  });
-});
-
-describe('Instance Methods', function() {
-  it('"instance.has(key)" should return true when key is present', function () {
-    let magicInstance  = AutoEnvConfig.load();
-    let hasInstanceKey = magicInstance.has('requiredKey');
-    expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
-    expect(hasInstanceKey).to.be.true;
-  });
-  it('"instance.has(key)" should return false when key is not present', function () {
-    let magicInstance  = AutoEnvConfig.load();
-    let hasInstanceKey = magicInstance.has('nonexistentKey');
-    expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
-    expect(hasInstanceKey).to.be.false;
-  });
-  it('"instance.get(key)" should return value when key is present', function () {
-    let magicInstance = AutoEnvConfig.load();
-    let instanceKey   = magicInstance.get('requiredKey');
-    expect(instanceKey).to.be.equal('magic');
-  });
-  it('"instance.get(key)" should throw when key is not present', function () {
-    let magicInstance = AutoEnvConfig.load();
-    let fn = function () { magicInstance.get('nonexistentKey'); };
-    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic.json") and there was no default on function call!');
-  });
-  it('"instance.get(key, default)" should return value when default is supplied and key is present', function () {
-    let magicInstance = AutoEnvConfig.load();
-    let instanceKey   = magicInstance.get('requiredKey', 'defaultValue');
-    expect(instanceKey).to.be.equal('magic');
-  });
-  it('"instance.get(key, default)" should return default it is supplied and key is not present', function () {
-    let magicInstance = AutoEnvConfig.load();
-    let instanceKey   = magicInstance.get('nonexistentKey', 'defaultValue');
-    expect(instanceKey).to.be.equal('defaultValue');
   });
 });
