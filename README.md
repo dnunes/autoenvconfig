@@ -176,6 +176,6 @@ Note that you can call `load` directly on the package or on any `AutoEnvConfig` 
 
 Created and maintained (with much ♡) by [diego nunes](http://dnunes.com)
 
-Donations with Bitcoin to _1H6Z1xbq1Lh3zKhEnDBxHZgEjcFPPjkpKF_:
+Donations with Bitcoin to _1PQyeHqusUj3SuTmw6DPqWSHptVHkYZ33R_:
 
-![1H6Z1xbq1Lh3zKhEnDBxHZgEjcFPPjkpKF](http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=bitcoin:1H6Z1xbq1Lh3zKhEnDBxHZgEjcFPPjkpKF)
+![1PQyeHqusUj3SuTmw6DPqWSHptVHkYZ33R](http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=bitcoin:1PQyeHqusUj3SuTmw6DPqWSHptVHkYZ33R)

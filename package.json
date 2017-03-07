@@ -1,14 +1,29 @@
 {
   "name": "autoenvconfig",
+
   "version": "0.1.5",
   "description": "Environment config that Just Works™!",
   "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "https://github.com/dnunes/autoenvconfig/",
+
   "main": "index.js",
   "scripts": {
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -c",
     "test": "./node_modules/.bin/mocha -c"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dnunes/autoenvconfig/"
+  },
+
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+
   "keywords": [
     "multiple",
     "env",
@@ -21,22 +36,12 @@
     "12fact",
     "12factor"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dnunes/autoenvconfig/"
-  },
-  "license": "MIT",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/dnunes/autoenvconfig/blob/master/LICENSE"
-    }
-  ],
   "devDependencies": {
     "chai": "^3.5.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "rewire": "^2.5.2",
     "sinon": "^1.17.5"
-  }
+  },
+  "dependencies": {}
 }
