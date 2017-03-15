@@ -1,11 +1,9 @@
 {
   "name": "autoenvconfig",
-
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Environment config that Just Works™!",
   "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "https://github.com/dnunes/autoenvconfig/",
-
   "main": "index.js",
   "scripts": {
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -c",
@@ -15,7 +13,6 @@
     "type": "git",
     "url": "https://github.com/dnunes/autoenvconfig/"
   },
-
   "license": "MIT",
   "licenses": [
     {
@@ -23,7 +20,6 @@
       "url": "http://opensource.org/licenses/MIT"
     }
   ],
-
   "keywords": [
     "multiple",
     "env",
