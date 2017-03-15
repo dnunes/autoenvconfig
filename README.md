@@ -116,7 +116,7 @@ This method will replace the contents of `<key>` for the [_magic instance_](#mag
 
 ### <a id="instancemethods">Instance Methods</a>
 
-- <a id="mautoload">`<Instance>.load([<envName>])`</a>
+- <a id="minsload">`<Instance>.load([<envName>])`</a>
 This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you ommit the `<envName>` parameter, it will try to [_magic load_](#magicload) it. If you pass the `<envName>` parameter, it will just return the config for the specified env. It returns false if it cannot find an environment config.
 
 - <a id="minsget">`<Instance>.get(<key>[, <defaultValueIfNotPresent>])`</a>
@@ -158,6 +158,8 @@ Note that you can call `load` directly on the package or on any `AutoEnvConfig` 
 
 
 ## <a id="releaseh">Release History</a>
+
+* [0.1.6](https://github.com/dnunes/autoenvconfig/releases/tag/v0.1.6) Added unit tests for "[set](#mautoset)" methods and finished pending test for internal cache;
 
 * [0.1.5](https://github.com/dnunes/autoenvconfig/releases/tag/v0.1.5) Added "[set](#mautoset)" methods and started improving documentation for API. Missing unit tests on it;
 
