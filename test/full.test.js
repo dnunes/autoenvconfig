@@ -91,68 +91,68 @@ describe('Load Error Handling', function() {
     expect(AutoEnvConfig.load).to.throw(expectedErrMessage);
   });
 
-  it('throws exception when ".conf" is invalid (parse error)', function () {
+  it('throws exception when "env.conf" is invalid (parse error)', function () {
     let fn = function () { AutoEnvConfig.load('env_parseError.json'); };
     let expectedErrMessage = 'There is a syntax error in your config file';
     expect(fn).to.throw(expectedErrMessage);
   });
 
-  it('throws exception when ".conf" have properties not present in ".schema"', function () {
+  it('throws exception when "env.conf" have properties not present in ".schema"', function () {
     let fn = function () { AutoEnvConfig.load('env_unexpectedProperty.json'); };
     let expectedErrMessage = 'Unexpected key "deep.key.unexpected" in current env config.';
     expect(fn).to.throw(expectedErrMessage);
   });
 
-  it('throws exception when ".conf" does not have some required property', function () {
+  it('throws exception when "env.conf" does not have some required property', function () {
     let fn = function () { AutoEnvConfig.load('env_missingProperty.json'); };
     let expectedErrMessage = 'Required key "deep.key.supported" missing from your current env config!';
     expect(fn).to.throw(expectedErrMessage);
   });
 
-  it('throws exception when ".conf" have a property with a type that does not match schema', function () {
+  it('throws exception when "env.conf" have a property with a type that does not match schema', function () {
     let fn = function () { AutoEnvConfig.load('env_typeMismatch.json'); };
     let expectedErrMessage = 'Env config key "deep.key" must be of type "object" ("string" found)';
     expect(fn).to.throw(expectedErrMessage);
   });
 
-  it('magic "module.load()" returns false when there is no matching env path', function () {
+  it('magic "module.load" returns false when there is no matching env path', function () {
     replaceFiles = {'magic.json': 'env1.json'};
     let magicInstance = AutoEnvConfig.load();
     expect(magicInstance).to.be.false;
   });
 
-  it('".load" should use caches when called more than once even with "forceNew" flag', function () {
+  it('magic "module.load" should use "defaultEnvID" cache even with "forceNew" flag', function () {
+    var readdirSyncSpy = sinon.spy(fs, 'readdirSync');
+    AutoEnvConfig.load('', 'forceNew');
     AutoEnvConfig.load('', 'forceNew');
     AutoEnvConfig.load('', 'forceNew');
     AutoEnvConfig.load();
-    expect(true).to.be.false;
+    readdirSyncSpy.restore();
+    expect(readdirSyncSpy.callCount).to.be.equal(1);
   });
 });
 
 
 describe('Specific Loading', function() {
-  it('should load <name> when using "module.load(name)"', function () {
+  it('"module.load(name)" should load <name>', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey      = specificInstance.get('requiredKey');
-
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificKey).to.be.equal('value1');
   });
 
-  it('should load <name> when using "module.load(name.json)"', function () {
+  it('"module.load(name.json)" should load <name>', function () {
     let specificInstance = AutoEnvConfig.load('env1.json');
     let specificKey      = specificInstance.get('requiredKey');
-
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificKey).to.be.equal('value1');
   });
 
-  it('should load <name> when using "instance.load(name)"', function () {
+  it('"instance.load(name)" should load <name>', function () {
     let specificInstance1 = AutoEnvConfig.load('env1');
     let specificKey1      = specificInstance1.get('requiredKey');
     let specificInstance2 = specificInstance1.load('env2');
     let specificKey2      = specificInstance2.get('requiredKey');
-
     expect(specificInstance1).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance2).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance1).to.not.be.equal(specificInstance2);
@@ -163,26 +163,23 @@ describe('Specific Loading', function() {
 
 
 describe('Magic Loading', function() {
-  it('should use <default> on magic "module.load()"', function () {
+  it('"module.load()" should use <default>', function () {
     let magicInstance = AutoEnvConfig.load();
     let magicKey      = magicInstance.get('requiredKey');
-
     expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicKey).to.be.equal('magic');
   });
 
-  it('should use <default> on magic "module.get"', function () {
+  it('"module.get" should use <default>', function () {
     let magicKey = AutoEnvConfig.get('requiredKey');
-
     expect(magicKey).to.be.equal('magic');
   });
 
-  it('should use <default> on magic "module.load()" after "module.load(name)"', function () {
+  it('"module.load()" should use <default> even after "module.load(name)"', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey      = specificInstance.get('requiredKey');
     let magicInstance    = AutoEnvConfig.load();
     let magicKey         = magicInstance.get('requiredKey');
-
     expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicInstance).to.not.be.equal(specificInstance);
@@ -190,34 +187,36 @@ describe('Magic Loading', function() {
     expect(magicKey).to.be.equal('magic');
   });
 
-  it('should use <name> on magic "module.get" after "module.load(name)"', function () {
+  it('"module.get" should use <name> after "module.load(name)"', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let magicKey         = AutoEnvConfig.get("requiredKey");
-
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicKey).to.be.equal('value1');
   });
 });
 
 describe('Instance Load and Magic Load equivalence', function() {
-  it('"instance" load object should be the same as "magic" load object', function () {
+  it('"module.load()" object should be the same as "module.load(defaultEnv)" object', function () {
     let magicInstance  = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('magic.json');
     expect(magicInstance).to.be.equal(specificInstance);
   });
-  it('"instance.has" should be the same as "module.has"', function () {
+  it('"module.has" should be the same as "instance.has"', function () {
     let magicInstance  = AutoEnvConfig.load();
-    let specificInstance = AutoEnvConfig.load('magic.json');
+    let specificInstance = AutoEnvConfig.load('env1');
+    expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.has).to.be.equal(specificInstance.has);
   });
-  it('"instance.get" should be the same as "module.get"', function () {
+  it('"module.get" should be the same as "instance.get"', function () {
     let magicInstance  = AutoEnvConfig.load();
-    let specificInstance = AutoEnvConfig.load('magic.json');
+    let specificInstance = AutoEnvConfig.load('env1');
+    expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.get).to.be.equal(specificInstance.get);
   });
-  it('"instance.set" should be the same as "module.set"', function () {
+  it('"module.set" should be the same as "instance.set"', function () {
     let magicInstance  = AutoEnvConfig.load();
-    let specificInstance = AutoEnvConfig.load('magic.json');
+    let specificInstance = AutoEnvConfig.load('env1');
+    expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.set).to.be.equal(specificInstance.set);
   });
 });
@@ -247,4 +246,23 @@ describe('Methods', function() {
     let magicKey = AutoEnvConfig.get('nonexistentKey', 'defaultValue');
     expect(magicKey).to.be.equal('defaultValue');
   });
+  it('magic "module.set(key, value)" should update the value when the key does exist', function () {
+    AutoEnvConfig.set('requiredKey', 'updated');
+    let magicKey = AutoEnvConfig.get('requiredKey');
+    expect(magicKey).to.be.equal('updated');
+  });
+  it('magic "module.set(key, value)" should update the value of deep keys when the key does exist', function () {
+    AutoEnvConfig.set('deep.key.supported', 'updated');
+    let magicKey = AutoEnvConfig.get('deep.key.supported');
+    expect(magicKey).to.be.equal('updated');
+  });
+  it('magic "module.set(key, value)" should throw when new value have different type', function () {
+    let fn = function () { AutoEnvConfig.set('deep.key', 'updated'); };
+    expect(fn).to.throw('Env config key "deep.key" must be of type "object" ("string" received)');
+  });
+  it('magic "module.set(key, value)" should throw when a key in not present in schema', function () {
+    let fn = function () { AutoEnvConfig.set('nonexistentKey'); };
+    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic.json").');
+  });
+
 });
