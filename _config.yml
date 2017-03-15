@@ -1,0 +1,8 @@
+title: Autoenvconfig
+description: Environment config that Just Works™!
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-slate
+
+gems:
+  - jekyll-mentions
