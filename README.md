@@ -1,5 +1,5 @@
 autoenvconfig
-============
+=============
 ### Environment config that Just Works™!
 
 Stop worrying about the hassle of **loading environment config files everywhere**, **config files with missing entries** or **schemas that gets old when you forget to add a new config key to it**.
@@ -8,7 +8,7 @@ Stop worrying about the hassle of **loading environment config files everywhere*
 
 **AutoEnvConfig** was designed with simple but very powerful goals:
 
-* **Blazing fast**: it caches everything it can, loads your files only once and check your schema on load, not on usage;
+* **Blazingly fast**: it caches everything it can, loads your files only once and check your schema on load, not on usage;
 * **No extra configuration needed**: this package follows the idea of _convention over configuration_, so it keeps the required environment files to a minimum and there is nothing to thinker with before start using it;
 * **Never out of sync**: when loading the environment configuration file, it checks the schema for *missing AND for extra keys*, alerting you when you are missing some key in your config or in your schema file;
 * **Auto load the right config file**: you can set the root path of the project in the environment config file and it will load automatically.
@@ -21,7 +21,7 @@ Check out the [Installation Instructions](#installation), [Quick Start Guide](#q
 ## <a id="installation">Installation</a>
 The simplest way to install this package is using [npm](http://www.npmjs.com/):
 ```bash
-$ npm i AutoEnvConfig -S
+$ npm i -S AutoEnvConfig
 ```
 
 You can also manually download the [latest release](https://github.com/dnunes/autoenvconfig/zipball/master) from [our project page](http://dnunes.com/autoenvconfig/) or any release from [our GitHub repository](https://github.com/dnunes/autoenvconfig/) on the [releases page](https://github.com/dnunes/autoenvconfig/releases/).
@@ -29,7 +29,7 @@ You can also manually download the [latest release](https://github.com/dnunes/au
 
 ## <a id="quickstart">Quick Start Guide</a>
 
-There is just four steps needed to start using this package:
+There are just four steps needed to start using this package:
 
 1. Create a folder named `envs` on your project's root;
 2. Create a [`config.schema`](#sampleschema) file with your schema;
@@ -56,7 +56,7 @@ One of the nicest features of the package is that you don't need to specify the 
 
 For the magic load to happen, your [`config.schema`](#sampleschema) and [`ENVNAME.json`](#sampleenv) files must have a "path" key with the path of your project's root. It will find the correct environment checking this value by default. You can, however, safely ignore this convention and manually specify the file name.
 
-### <a id="magicload">Schema and and Environment File formats</a>
+### <a id="magicload">Schema and Environment File formats</a>
 The schema and environment config files are simple JSON files. The only limit for the _keys_ is the dot character ("`.`") which is forbidden (because it is used as a separator when loading), but I suggest you to limit your keys to alphanumeric chars for simplicity.
 
 In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indicating mandatory or optional key, respectively.
@@ -81,7 +81,7 @@ In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indica
 }
 ```
 
-You can have a required key inside an optional object (in this sample, the `supported` required key is inside optional `deep` and `key` objects), so that you can omit the whole object (it will use the defaults), but if it exists in the environment config file, it must contain at least these required keys.
+You can have a required key inside an optional object (in this sample, the `supported` required key is inside optional `deep` and `key` objects), so that you can omit the whole object (it will use the defaults), but if it exists in the environment config file, it must include at least these required keys.
 
 ### <a id="sampleenv">Sample ENVNAME.json</a>
 ```json
@@ -151,7 +151,7 @@ let otherConfig = AutoEnvConfig.load('other');
 otherConfig.get('key.in.other.file');
 
 //load "envs/oneMore.json"
-let oneMoreConfig = rightConfig .load('oneMore.json');
+let oneMoreConfig = rightConfig.load('oneMore.json');
 oneMoreConfig.get('key.in.onemore.file');
 ```
 Note that you can call `load` directly on the package or on any `AutoEnvConfig` object returned by the `load` method.
