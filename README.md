@@ -11,7 +11,8 @@ Stop worrying about the hassle of **loading environment config files everywhere*
 * **Blazingly fast**: it caches everything it can, loads your files only once and check your schema on load, not on usage;
 * **No extra configuration needed**: this package follows the idea of _convention over configuration_, so it keeps the required environment files to a minimum and there is nothing to thinker with before start using it;
 * **Never out of sync**: when loading the environment configuration file, it checks the schema for *missing AND for extra keys*, alerting you when you are missing some key in your config or in your schema file;
-* **Auto load the right config file**: you can set the root path of the project in the environment config file and it will load automatically.
+* **Auto load of the right config file**: you can set the root path of the project in the environment config file and it will load automatically.
+* **Possible local persistency**: you can overwrite data by code and have it persisted across restarts (or even deploys!) whenever needed. Think general settings' dashboard for a small project.
 
 Simply create your [schema file](#sampleschema) specifying optional and required keys (plus: it can contain default values, too!), setup an [environment file](#sampleenv) with optional specific overrides and you're good to go!
 
@@ -95,6 +96,11 @@ You can have a required key inside an optional object (in this sample, the `supp
 ```
 
 
+## <a id="eventualpersistency">Eventual Persistency</a>
+
+If you need to overwrite some settings through code you can use [`AutoEnvConfig.set(<key>, <value>))`](#mautoset) method (or its [instance counterpart](#minsset)). This change will not survive restarts or new deploys, though.
+
+
 ## <a id="methods">Methods</a>
 
 All the methods can be called in a specific instance (from a `AutoEnvConfig.load` call) or in the [_magic instance_](#magicload). You can save a reference for the [_magic instance_](#magicload) using a `AutoEnvConfig.load()` call and call methods on this instance as well and it will work exactly the same as calling the methods directly on the package.
@@ -105,19 +111,22 @@ All the methods can be called in a specific instance (from a `AutoEnvConfig.load
 This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you ommit the `<envName>` parameter, it will try to [_magic load_](#magicload) it. If you pass the `<envName>` parameter, it will just return the config for the specified env. It returns false if it cannot find an environment config.
 
 - <a id="mautoget">`AutoEnvConfig.get(<key>[, <defaultValueIfNotPresent>])`</a>
-This method will return the value of `<key>` in the [_magic instance_](#magicload). If `key` is not present in the [_magic instance_](#magicload), it will either return `<defaultValueIfNotPresent>` or throw an error if there the default value parameter was committed.
+This method creates a [_magic instance_](#magicload) and calls [`<Instance>.get(<key>[, <defaultValueIfNotPresent>])`](#minsget) on it
 
 - <a id="mautohas">`AutoEnvConfig.has(<key>)`</a>
-This method will return boolean `true` if the `<key>` is present in the [_magic instance_](#magicload) or boolean `false` if not.
+This method creates a [_magic instance_](#magicload) and calls [`<Instance>.has(<key>)`](#minshas) on it
 
 - <a id="mautoset">`AutoEnvConfig.set(<key>, <value>)`</a>
-This method will replace the contents of `<key>` for the [_magic instance_](#magicload) with `<value>`;
+This method creates a [_magic instance_](#magicload) and calls [`<Instance>.set(<key>, <value>))`](#minsset) on it
+
+- <a id="mautoset">`AutoEnvConfig.persist(<key>, <value>)`</a>
+This method creates a [_magic instance_](#magicload) and calls [`<Instance>.persist(<key>, <value>))`](#minsper) on it
 
 
 ### <a id="instancemethods">Instance Methods</a>
 
 - <a id="minsload">`<Instance>.load([<envName>])`</a>
-This method will return a new instance of `AutoEnvConfig` class (actually, prototype). If you ommit the `<envName>` parameter, it will try to [_magic load_](#magicload) it. If you pass the `<envName>` parameter, it will just return the config for the specified env. It returns false if it cannot find an environment config.
+The same as [`AutoEnvConfig.load([<envName>])`](#mautoload)
 
 - <a id="minsget">`<Instance>.get(<key>[, <defaultValueIfNotPresent>])`</a>
 This method will return the value of `<key>` in the `<Instance>` object. If `<key>` is not present in the `<Instance>` object, it will either return `<defaultValueIfNotPresent>` or throw an error if there the default value parameter was committed.
@@ -126,7 +135,10 @@ This method will return the value of `<key>` in the `<Instance>` object. If `<ke
 This method will return boolean `true` if the `<key>` is present in the `<Instance>` object or boolean `false` if not.
 
 - <a id="minsset">`<Instance>.set(<key>, <value>)`</a>
-This method will replace the  contents of `<key>` for the `<Instance>` object with `<value>`;
+This method will replace the in-memory contents of `<key>` for the `<Instance>` object with `<value>`;
+
+- <a id="minsper">`<Instance>.persist(<key>, <value>)`</a>
+This method will replace the in-memory contents of `<key>` for the `<Instance>` object with `<value>` and try to [eventually persist](#eventualpersistency) it on disk.
 
 
 ## <a id="advancedusage">Advanced Usage</a>
