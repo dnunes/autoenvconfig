@@ -1,7 +1,8 @@
 {
+  "_path": %curpath%,
+
   "id": "magic",
   "envtype": "local",
-  "path": %curpath%,
 
   "requiredKey": "magic",
   "deep": {

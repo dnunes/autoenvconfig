@@ -1,7 +1,8 @@
 {
+  "_path": "/some/random/path",
+
   "id": "env1",
   "envtype": "staging",
-  "path": "/some/random/path",
 
   "requiredKey": "value1",
   "deep": {

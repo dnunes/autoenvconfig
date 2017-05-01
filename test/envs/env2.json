@@ -1,7 +1,8 @@
 {
+  "_path": "/some/random/path",
+
   "id": "env2",
   "envtype": "production",
-  "path": "/some/random/path",
 
   "requiredKey": "value2",
   "deep": {

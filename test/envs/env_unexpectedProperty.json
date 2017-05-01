@@ -1,7 +1,8 @@
 {
+  "_path": "/some/random/path",
+
   "id": "envUnexpected",
   "envtype": "production",
-  "path": "/some/random/path",
 
   "requiredKey": "valueUnexpected",
   "deep": {

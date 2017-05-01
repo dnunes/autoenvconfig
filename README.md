@@ -55,7 +55,7 @@ if (isValuePresent) {
 
 One of the nicest features of the package is that you don't need to specify the environment, as it will magicly detect and load the correct file based on some values. This auto generated instance is called [_magic instance_](#magicload).
 
-For the magic load to happen, your [`config.schema`](#sampleschema) and [`ENVNAME.json`](#sampleenv) files must have a "path" key with the path of your project's root. It will find the correct environment checking this value by default. You can, however, safely ignore this convention and manually specify the file name.
+For the magic load to happen, your [`config.schema`](#sampleschema) and [`ENVNAME.json`](#sampleenv) files must have a "_path" key with the path of your project's root. It will find the correct environment checking this value by default. You can, however, safely ignore this convention and manually specify the file name if needed.
 
 ### <a id="magicload">Schema and Environment File formats</a>
 The schema and environment config files are simple JSON files. The only limit for the _keys_ is the dot character ("`.`") which is forbidden (because it is used as a separator when loading), but I suggest you to limit your keys to alphanumeric chars for simplicity.
@@ -68,9 +68,10 @@ In the schema files, every key _MUST_ be prefixed with either `#` or `?`, indica
 ### <a id="sampleschema">Sample config.schema</a>
 ```json
 {
+  "# _path": "",
+
   "# id": "",
   "# envtype": "",
-  "# path": "",
 
   "# requiredKey": "",
   "? deep": {
@@ -87,9 +88,10 @@ You can have a required key inside an optional object (in this sample, the `supp
 ### <a id="sampleenv">Sample ENVNAME.json</a>
 ```json
 {
+  "_path": "/home/dnunes/code/node/autoenvconfig",
+
   "id": "dev",
   "envtype": "local",
-  "path": "/home/dnunes/code/node/autoenvconfig",
 
   "requiredKey": "value"
 }
@@ -154,7 +156,7 @@ You can also load multiple configs if ever needed:
 ```javascript
 AutoEnvConfig = require('autoenvconfig');
 
-//load the right env based on "path" config value
+//load the right env based on "_path" config value
 let rightConfig = AutoEnvConfig.load();
 rightConfig.get('key.in.right.file');
 

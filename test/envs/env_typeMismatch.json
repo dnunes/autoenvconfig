@@ -1,7 +1,8 @@
 {
+  "_path": "/some/random/path",
+
   "id": "envMismatch",
   "envtype": "staging",
-  "path": "/some/random/path",
 
   "requiredKey": "value1",
   "deep": {
