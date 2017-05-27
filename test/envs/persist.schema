@@ -1,0 +1,15 @@
+{
+  "# _path": "",
+
+  "# id": "",
+  "# envtype": "",
+
+  "# requiredKey": "",
+  "? deep": {
+    "? key": {
+      "# supported": "myValue",
+      "? asWell": "otherValue"
+    }
+  },
+  "# arr": []
+}

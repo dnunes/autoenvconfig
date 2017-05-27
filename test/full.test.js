@@ -40,7 +40,8 @@ before(() => {
 
   //This stub allows us to replace the path in the "magic.conf" file
   let origReadFileSync = fs.readFileSync;
-  sandbox.stub(fs, 'readFileSync', function (filepath, encoding) {
+
+  let stubbedReadFileSync = function (filepath, encoding) {
     let pathparts = filepath.split(path.sep);
     let filename = pathparts.pop();
     if (replaceFiles[filename]) { //use invalid or different files for tests
@@ -55,7 +56,8 @@ before(() => {
       content = content.replace('%curpath%', JSON.stringify(mockRootPath));
     }
     return content;
-  });
+  };
+  sandbox.stub(fs, 'readFileSync').callsFake(stubbedReadFileSync);
 });
 
 //# Reset on each test
@@ -195,6 +197,7 @@ describe('Magic Loading', function() {
   });
 });
 
+
 describe('Instance Load and Magic Load equivalence', function() {
   it('"module.load()" object should be the same as "module.load(defaultEnv)" object', function () {
     let magicInstance  = AutoEnvConfig.load();
@@ -220,6 +223,7 @@ describe('Instance Load and Magic Load equivalence', function() {
     expect(magicInstance.set).to.be.equal(specificInstance.set);
   });
 });
+
 
 describe('Methods', function() {
   it('magic "module.has(key)" should return true when key is present', function () {
@@ -264,5 +268,65 @@ describe('Methods', function() {
     let fn = function () { AutoEnvConfig.set('nonexistentKey'); };
     expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic.json").');
   });
+});
 
+
+describe.only('Persistence', function() {
+  it('throws exception when no ".schema" is present', function () {
+    replaceFiles = {'config.schema': 'persist.schema'};
+    let expectedErrMessage = 'There is no "config.schema" file in your envs folder!';
+    expect(AutoEnvConfig.load).to.throw(expectedErrMessage);
+  });
+
+  it('throws exception when ".schema" is invalid (parse error)', function () {
+    replaceFiles = {'config.schema': 'config_parseError.schema'};
+    let expectedErrMessage = 'There is a syntax error in your schema file ';
+    expect(AutoEnvConfig.load).to.throw(expectedErrMessage);
+  });
+
+  it('throw exception when ".schema" have keys without required prefix', function () {
+    replaceFiles = {'config.schema': 'config_noprefix.schema'};
+    let expectedErrMessage = 'Schema key "deep.key.supported" doesn\'t have a required prefix!';
+    expect(AutoEnvConfig.load).to.throw(expectedErrMessage);
+  });
+
+  it('throws exception when "env.conf" is invalid (parse error)', function () {
+    let fn = function () { AutoEnvConfig.load('env_parseError.json'); };
+    let expectedErrMessage = 'There is a syntax error in your config file';
+    expect(fn).to.throw(expectedErrMessage);
+  });
+
+  it('throws exception when "env.conf" have properties not present in ".schema"', function () {
+    let fn = function () { AutoEnvConfig.load('env_unexpectedProperty.json'); };
+    let expectedErrMessage = 'Unexpected key "deep.key.unexpected" in current env config.';
+    expect(fn).to.throw(expectedErrMessage);
+  });
+
+  it('throws exception when "env.conf" does not have some required property', function () {
+    let fn = function () { AutoEnvConfig.load('env_missingProperty.json'); };
+    let expectedErrMessage = 'Required key "deep.key.supported" missing from your current env config!';
+    expect(fn).to.throw(expectedErrMessage);
+  });
+
+  it('throws exception when "env.conf" have a property with a type that does not match schema', function () {
+    let fn = function () { AutoEnvConfig.load('env_typeMismatch.json'); };
+    let expectedErrMessage = 'Env config key "deep.key" must be of type "object" ("string" found)';
+    expect(fn).to.throw(expectedErrMessage);
+  });
+
+  it('magic "module.load" returns false when there is no matching env path', function () {
+    replaceFiles = {'magic.json': 'env1.json'};
+    let magicInstance = AutoEnvConfig.load();
+    expect(magicInstance).to.be.false;
+  });
+
+  it('magic "module.load" should use "defaultEnvID" cache even with "forceNew" flag', function () {
+    var readdirSyncSpy = sinon.spy(fs, 'readdirSync');
+    AutoEnvConfig.load('', 'forceNew');
+    AutoEnvConfig.load('', 'forceNew');
+    AutoEnvConfig.load('', 'forceNew');
+    AutoEnvConfig.load();
+    readdirSyncSpy.restore();
+    expect(readdirSyncSpy.callCount).to.be.equal(1);
+  });
 });
