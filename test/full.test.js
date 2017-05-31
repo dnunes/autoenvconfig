@@ -137,7 +137,6 @@ describe('Load Error Handling', function() {
     expect(readdirSyncSpy.callCount).to.be.equal(1);
   });
 
-
   it('throws exception when it cannot create persistence file', function () {
     let fn = function () {
       AutoEnvConfig.enablePersistence();
@@ -187,6 +186,49 @@ describe('Specific Loading', function() {
 });
 
 
+describe('Singleton by default behavior', function() {
+  it('will reuse the same instance by default', function () {
+    let specificInstance = AutoEnvConfig.load('env1');
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('value1');
+    specificInstance.set('requiredKey', 'newValue1');
+    let specificInstanceCopy = AutoEnvConfig.load('env1');
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('newValue1');
+  });
+
+  it('will reuse the same instance when two IDs resolve to the same env file', function () {
+    let specificInstance = AutoEnvConfig.load('env1');
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('value1');
+    specificInstance.set('requiredKey', 'newValue1');
+    let specificInstanceCopy = AutoEnvConfig.load('env1.json');
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('newValue1');
+  });
+
+  it('will use a new instance if "forceNew" flag is passed to "load" method', function () {
+    let specificInstance = AutoEnvConfig.load('env1');
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('value1');
+    specificInstance.set('requiredKey', 'newValue1');
+    let specificInstanceCopy = AutoEnvConfig.load('env1', 'forceNew');
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('value1');
+  });
+
+  it('will use a new instance if "forceNew" flag is passed to "load" method when two IDs resolve to the same env file', function () {
+    let specificInstance = AutoEnvConfig.load('env1');
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('value1');
+    specificInstance.set('requiredKey', 'newValue1');
+    let specificInstanceCopy = AutoEnvConfig.load('env1.json', 'forceNew');
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('value1');
+  });
+});
+
+
 describe('Magic Loading', function() {
   it('"module.load()" should use <default>', function () {
     let magicInstance = AutoEnvConfig.load();
@@ -195,7 +237,7 @@ describe('Magic Loading', function() {
     expect(magicKey).to.be.equal('magic');
   });
 
-  it('"module.load()" ID should not contain ".json"', function () {
+  it('"module.load()" ID should not include ".json"', function () {
     let magicInstance = AutoEnvConfig.load();
     expect(magicInstance.id).to.be.equal('magic');
   });
@@ -260,53 +302,71 @@ describe('Instance Load and Magic Load equivalence', function() {
 
 
 describe('Methods', function() {
-  it('magic "module.has(key)" should return true when key is present', function () {
+  it('"module.has(key)" should return true when key is present', function () {
     let hasMagicKey = AutoEnvConfig.has('requiredKey');
     expect(hasMagicKey).to.be.true;
   });
-  it('magic "module.has(key)" should return false when key is not present', function () {
+  it('"module.has(key)" should return false when key is not present', function () {
     let hasMagicKey = AutoEnvConfig.has('nonexistentKey');
     expect(hasMagicKey).to.be.false;
   });
-  it('magic "module.get(key)" should return value when key is present', function () {
+  it('"module.get(key)" should return value when key is present', function () {
     let magicKey = AutoEnvConfig.get('requiredKey');
     expect(magicKey).to.be.equal('magic');
   });
-  it('magic "module.get(key)" should throw when key is not present', function () {
+  it('"module.get(key)" should throw when key is not present', function () {
     let fn = function () { AutoEnvConfig.get('nonexistentKey'); };
     expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic") and there was no default on function call!');
   });
-  it('magic "module.get(key, default)" should return value when default is supplied and key is present', function () {
+  it('"module.get(key, default)" should return "key value" even when _default_ is supplied if _key_ is present', function () {
     let magicKey = AutoEnvConfig.get('requiredKey', 'defaultValue');
     expect(magicKey).to.be.equal('magic');
   });
-  it('magic "module.get(key, default)" should return default it is supplied and key is not present', function () {
+  it('"module.get(key, default)" should return "default" when it is supplied and _key_ is not present', function () {
     let magicKey = AutoEnvConfig.get('nonexistentKey', 'defaultValue');
     expect(magicKey).to.be.equal('defaultValue');
   });
-  it('magic "module.set(key, value)" should update the value when the key does exist', function () {
+  it('"module.set(key, value)" should update the value when _key_ exists', function () {
     AutoEnvConfig.set('requiredKey', 'updated');
     let magicKey = AutoEnvConfig.get('requiredKey');
     expect(magicKey).to.be.equal('updated');
   });
-  it('magic "module.set(key, value)" should update the value of deep keys when the key does exist', function () {
+  it('"module.set(key, value)" should update the value of deep keys when _key_ exists', function () {
     AutoEnvConfig.set('deep.key.supported', 'updated');
     let magicKey = AutoEnvConfig.get('deep.key.supported');
     expect(magicKey).to.be.equal('updated');
   });
-  it('magic "module.set(key, value)" should throw when new value have different type', function () {
+  it('"module.set(key, value)" should throw when _value_ type mismatch', function () {
     let fn = function () { AutoEnvConfig.set('deep.key', 'updated'); };
     expect(fn).to.throw('Env config key "deep.key" must be of type "object" ("string" received)');
   });
-  it('magic "module.set(key, value)" should throw when a key in not present in schema', function () {
+  it('"module.set(key, value)" should throw when _key_ is not present in schema', function () {
     let fn = function () { AutoEnvConfig.set('nonexistentKey'); };
     expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic").');
+  });
+  it('"module.persist(key, value)" should throw when called in a disabled persistence setting', function () {
+    let fn = function () {
+      AutoEnvConfig.set('requiredKey', 'ok');
+      AutoEnvConfig.persist('requiredKey', 'fail');
+    };
+    expect(fn).to.throw('The current instance of AutoEnvConfig was not set to have persistence activated!');
+  });
+  it('"instance.persist(key, value)" should throw when called in an instance created with persistence but disabled later on', function () {
+    let fn = function () {
+      AutoEnvConfig.enablePersistence();
+      let specificInstance = AutoEnvConfig.load('env1');
+      specificInstance.set('requiredKey', 'ok');
+      specificInstance.persist('requiredKey', 'ok');
+      specificInstance.disablePersistence();
+      specificInstance.persist('requiredKey', 'fail');
+    };
+    expect(fn).to.throw('The current instance of AutoEnvConfig was not set to have persistence activated!');
+    leftoverFiles = ['test/envs/env1.persist.json'];
   });
 });
 
 
-
-describe('Persistence', function() {
+describe('Persistence Files', function() {
   it('create a persistence file in default location when persistence is enabled and no special settings are in place', function () {
     AutoEnvConfig.enablePersistence();
     AutoEnvConfig.load('env1');
@@ -322,36 +382,78 @@ describe('Persistence', function() {
   });
 
   it('NOT create a persistence file when persistence is disabled', function () {
+    AutoEnvConfig.load('env1');
+    expect(fs.existsSync('test/envs/env1.persist.json')).to.be.false;
+  });
+});
+
+
+describe('Global and Instance Persistence settings', function() {
+  it('disabling persistence on global setting should also disable it on Magic Instance', function () {
+    let fn = function () {
+      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.set('requiredKey', 'ok');
+      AutoEnvConfig.persist('requiredKey', 'ok');
+      //disabled globally. also disabled it on magic instance.
+      AutoEnvConfig.disablePersistence();
+      AutoEnvConfig.persist('requiredKey', 'ok');
+    };
+    expect(fn).to.throw('The current instance of AutoEnvConfig was not set to have persistence activated!');
+    leftoverFiles = ['test/envs/magic.persist.json'];
   });
 
-  //first enable persistence, then disable it and then try ".persist"! It should error out!
-  it('throws exception when using ".persist" in the magic instance with disabled persistence', function () {
-  });
-
-  it('throws exception when using ".persist" in an instance with disabled persistence', function () {
+  it('you can also disable global persistence setting without affecting Magic Instance', function () {
+    let fn = function () {
+      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.set('requiredKey', 'ok');
+      AutoEnvConfig.persist('requiredKey', 'ok');
+      AutoEnvConfig.disablePersistence(false);
+      AutoEnvConfig.persist('requiredKey', 'ok');
+    };
+    expect(fn).to.not.throw();
+    leftoverFiles = ['test/envs/magic.persist.json'];
   });
 
   it('do NOT load persisted data when persistence is disabled', function () {
+    AutoEnvConfig.load('env_persist_existing');
+    let specificKey = AutoEnvConfig.get('requiredKey');
+    expect(specificKey).to.be.equal('not_loaded');
   });
 
-  it('do NOT load persisted data when persistence is disabled', function () {
+  it('load persisted data on load when persistence is globally enabled', function () {
+    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.load('env_persist_existing');
+    let specificKey = AutoEnvConfig.get('requiredKey');
+    expect(specificKey).to.be.equal('loaded_from_persistence');
   });
 
-  it('load persisted data when persistence is enabled', function () {
-  });
+  it('load persisted data when persistence is enabled only later in the code execution', function () {
+    AutoEnvConfig.load('env_persist_existing');
+    let specificKey = AutoEnvConfig.get('requiredKey');
+    expect(specificKey).to.be.equal('not_loaded');
 
-  it('load persisted data when persistence is enabled later in the code execution', function () {
+    AutoEnvConfig.enablePersistence();
+    specificKey = AutoEnvConfig.get('requiredKey');
+    expect(specificKey).to.be.equal('loaded_from_persistence');
   });
+});
 
-  it('enable persistence without overwriting current settings when persistence is enabled later in the code execution with the right arguments', function () {
+describe('New!', function () {
+  it('enable persistence in an instance without overwriting current loaded config', function () {
+    let specificInstance = AutoEnvConfig.load('env_persist_existing');
+    specificInstance.enablePersistence(); //overwrite
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('loaded_from_persistence');
+
+    let specificInstanceCopy = AutoEnvConfig.load('env_persist_existing', 'forceNew');
+    specificInstanceCopy.enablePersistence(120, false); //don't overwrite
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('not_loaded');
   });
 
   it('do NOT persist data when using "set" method even with persistence enabled', function () {
   });
 
-
-
-  //get data from persistence AFTER loading (".enablePersistence")
   //use "set" and not "persist" and then get from persistence (should keep the same value)
   //
 });
