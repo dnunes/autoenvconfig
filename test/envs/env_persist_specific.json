@@ -1,0 +1,8 @@
+{
+  "_path": "/some/random/path",
+  "_persistFile": "./specificPath.persist.json",
+
+  "id": "persist_specific",
+
+  "requiredKey": "value1"
+}

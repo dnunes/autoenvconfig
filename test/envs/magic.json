@@ -2,13 +2,6 @@
   "_path": %curpath%,
 
   "id": "magic",
-  "envtype": "local",
 
-  "requiredKey": "magic",
-  "deep": {
-    "key": {
-      "supported": ":)"
-    }
-  },
-  "arr": []
+  "requiredKey": "magic"
 }

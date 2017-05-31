@@ -2,7 +2,7 @@
   "# _path": "",
 
   "# id": "",
-  "# envtype": "",
+  "? envtype": "",
 
   "# requiredKey": "",
   "# deep": {
@@ -11,5 +11,5 @@
       "? asWell": "otherValue"
     }
   },
-  "# arr": []
+  "? arr": []
 }

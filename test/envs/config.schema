@@ -1,8 +1,9 @@
 {
   "# _path": "",
+  "? _persistFile": "",
 
   "# id": "",
-  "# envtype": "",
+  "? envtype": "",
 
   "# requiredKey": "",
   "? deep": {
@@ -11,5 +12,5 @@
       "? asWell": "otherValue"
     }
   },
-  "# arr": []
+  "? arr": []
 }

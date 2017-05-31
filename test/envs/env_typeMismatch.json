@@ -7,8 +7,5 @@
   "requiredKey": "value1",
   "deep": {
     "key": "this should be an object"
-
-
-  },
-  "arr": []
+  }
 }

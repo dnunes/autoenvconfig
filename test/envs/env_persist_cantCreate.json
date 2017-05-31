@@ -1,0 +1,8 @@
+{
+  "_path": "/some/random/path",
+  "_persistFile": "/invalid/path.json",
+
+  "id": "persist_cantCreate",
+
+  "requiredKey": "cantCreate"
+}
