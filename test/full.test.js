@@ -195,6 +195,11 @@ describe('Magic Loading', function() {
     expect(magicKey).to.be.equal('magic');
   });
 
+  it('"module.load()" ID should not contain ".json"', function () {
+    let magicInstance = AutoEnvConfig.load();
+    expect(magicInstance.id).to.be.equal('magic');
+  });
+
   it('"module.get" should use <default>', function () {
     let magicKey = AutoEnvConfig.get('requiredKey');
     expect(magicKey).to.be.equal('magic');
@@ -269,7 +274,7 @@ describe('Methods', function() {
   });
   it('magic "module.get(key)" should throw when key is not present', function () {
     let fn = function () { AutoEnvConfig.get('nonexistentKey'); };
-    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic.json") and there was no default on function call!');
+    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic") and there was no default on function call!');
   });
   it('magic "module.get(key, default)" should return value when default is supplied and key is present', function () {
     let magicKey = AutoEnvConfig.get('requiredKey', 'defaultValue');
@@ -295,7 +300,7 @@ describe('Methods', function() {
   });
   it('magic "module.set(key, value)" should throw when a key in not present in schema', function () {
     let fn = function () { AutoEnvConfig.set('nonexistentKey'); };
-    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic.json").');
+    expect(fn).to.throw('Can\'t find key "nonexistentKey" on current env config ("magic").');
   });
 });
 
