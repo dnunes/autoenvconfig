@@ -64,11 +64,14 @@ before(() => {
 
 //# Reset on each test
 afterEach(() => {
-  leftoverFiles.forEach((file) => fs.unlinkSync(file));
-  AutoEnvConfig._reset();
-  leftoverFiles = [];
+  //clear replace files list
   replaceFiles = {};
-}); //reset autoInstance and cache
+  //remove leftovers
+  leftoverFiles.forEach((file) => fs.unlinkSync(file));
+  leftoverFiles = [];
+  //reset all internal state
+  AutoEnvConfig._reset();
+});
 
 //# Cleanup
 after(() => {
@@ -186,32 +189,38 @@ describe('Specific Loading', function() {
 });
 
 
-describe('Singleton by default behavior', function() {
+describe('Singleton-by-default behavior', function() {
   it('will reuse the same instance by default', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('value1');
-    specificInstance.set('requiredKey', 'newValue1');
+    //replace in-memory
+    specificInstance.set('requiredKey', 'set_by_code');
+    specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('set_by_code');
+    //load. internall cache should return the same instance
     let specificInstanceCopy = AutoEnvConfig.load('env1');
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
-    expect(specificKeyCopy).to.be.equal('newValue1');
+    expect(specificKeyCopy).to.be.equal('set_by_code');
   });
 
   it('will reuse the same instance when two IDs resolve to the same env file', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('value1');
-    specificInstance.set('requiredKey', 'newValue1');
+    specificInstance.set('requiredKey', 'set_by_code');
     let specificInstanceCopy = AutoEnvConfig.load('env1.json');
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
-    expect(specificKeyCopy).to.be.equal('newValue1');
+    expect(specificKeyCopy).to.be.equal('set_by_code');
   });
 
   it('will use a new instance if "forceNew" flag is passed to "load" method', function () {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('value1');
-    specificInstance.set('requiredKey', 'newValue1');
+    specificInstance.set('requiredKey', 'set_by_code');
+    specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('set_by_code');
     let specificInstanceCopy = AutoEnvConfig.load('env1', 'forceNew');
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
     expect(specificKeyCopy).to.be.equal('value1');
@@ -221,7 +230,9 @@ describe('Singleton by default behavior', function() {
     let specificInstance = AutoEnvConfig.load('env1');
     let specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('value1');
-    specificInstance.set('requiredKey', 'newValue1');
+    specificInstance.set('requiredKey', 'set_by_code');
+    specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('set_by_code');
     let specificInstanceCopy = AutoEnvConfig.load('env1.json', 'forceNew');
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
     expect(specificKeyCopy).to.be.equal('value1');
@@ -431,20 +442,18 @@ describe('Global and Instance Persistence settings', function() {
     AutoEnvConfig.load('env_persist_existing');
     let specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('not_loaded');
-
+    //now enable persistence and retry
     AutoEnvConfig.enablePersistence();
     specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('loaded_from_persistence');
   });
-});
 
-describe('New!', function () {
   it('enable persistence in an instance without overwriting current loaded config', function () {
     let specificInstance = AutoEnvConfig.load('env_persist_existing');
     specificInstance.enablePersistence(); //overwrite
     let specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('loaded_from_persistence');
-
+    //load new instance and enable persistence without override
     let specificInstanceCopy = AutoEnvConfig.load('env_persist_existing', 'forceNew');
     specificInstanceCopy.enablePersistence(120, false); //don't overwrite
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
@@ -452,8 +461,25 @@ describe('New!', function () {
   });
 
   it('do NOT persist data when using "set" method even with persistence enabled', function () {
+    AutoEnvConfig.enablePersistence();
+    let specificInstance = AutoEnvConfig.load('env_persist_existing');
+    //check low level implementation as well.
+    var internalWriteCall = sinon.spy(specificInstance.eventualPersistence, '_writeToDisk');
+    let specificKey = specificInstance.get('requiredKey');
+    expect(specificInstance.get('requiredKey')).to.be.equal('loaded_from_persistence');
+    //persistence activated, but replace in-memory only!
+    specificInstance.set('requiredKey', 'replaced_by_code');
+    //check that the in-memory value was changed
+    specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('replaced_by_code');
+    //check number of calls to persist the file
+    internalWriteCall.restore();
+    expect(internalWriteCall.callCount).to.be.equal(0);
+    //load new instance, which will re-read the persistence data
+    let specificInstanceCopy = AutoEnvConfig.load('env_persist_existing', 'forceNew');
+    specificInstanceCopy.enablePersistence(120, false); //don't overwrite
+    let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    //it should not be changed!
+    expect(specificKeyCopy).to.be.equal('loaded_from_persistence');
   });
-
-  //use "set" and not "persist" and then get from persistence (should keep the same value)
-  //
 });
