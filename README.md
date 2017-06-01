@@ -196,7 +196,7 @@ Note that you can call `load` directly on the package or on any `AutoEnvConfig` 
 
 ## <a id="releaseh">Release History</a>
 
-* [1.0.0](https://github.com/dnunes/autoenvconfig/releases/tag/v1.0.0) Added local [eventual persistence](#eventualpersistence)(beta) and basic unit tests this new feature;
+* [1.0.0](https://github.com/dnunes/autoenvconfig/releases/tag/v1.0.0) Added local [eventual persistence](#eventualpersistence) (beta) and basic unit tests this new feature;
 
 * [0.1.6](https://github.com/dnunes/autoenvconfig/releases/tag/v0.1.6) Added unit tests for "[set](#mautoset)" methods and finished pending test for internal cache;
 
