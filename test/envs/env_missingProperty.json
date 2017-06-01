@@ -1,13 +1,12 @@
 {
+  "_path": "/some/random/path",
+
   "id": "envMissing",
-  "envtype": "production",
-  "path": "/some/random/path",
 
   "requiredKey": "missing",
   "deep": {
     "key": {
 
     }
-  },
-  "arr": []
+  }
 }

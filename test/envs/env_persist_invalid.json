@@ -1,0 +1,8 @@
+{
+  "_path": "/some/random/path",
+  "_persistFile": "./test/envs/persist/env_persist_invalid.persist.json",
+
+  "id": "persist_invalid",
+
+  "requiredKey": "invalid"
+}

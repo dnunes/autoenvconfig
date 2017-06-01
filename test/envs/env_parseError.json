@@ -1,13 +1,12 @@
 {
+  "_path": "/some/random/path",
+
   "id": "envParseError",
-  "envtype": "production",
-  "path": "/some/random/path",
 
   "requiredKey": "valueParseError" //there should be a comma here
   "deep": { //also, no comments are allowed in json files
     "key": {
       "supported": ":)"
     }
-  },
-  "arr": []
+  }
 }

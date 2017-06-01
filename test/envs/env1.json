@@ -1,13 +1,7 @@
 {
-  "id": "env1",
-  "envtype": "staging",
-  "path": "/some/random/path",
+  "_path": "/some/random/path",
 
-  "requiredKey": "value1",
-  "deep": {
-    "key": {
-      "supported": ":)"
-    }
-  },
-  "arr": []
+  "id": "env1",
+
+  "requiredKey": "value1"
 }

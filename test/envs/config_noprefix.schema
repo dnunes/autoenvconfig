@@ -1,7 +1,8 @@
 {
+  "# _path": "",
+
   "# id": "",
-  "# envtype": "",
-  "# path": "",
+  "? envtype": "",
 
   "# requiredKey": "",
   "# deep": {
@@ -10,5 +11,5 @@
       "? asWell": "otherValue"
     }
   },
-  "# arr": []
+  "? arr": []
 }

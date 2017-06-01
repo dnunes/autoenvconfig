@@ -1,7 +1,8 @@
 {
+  "# _path": "INVALID",
+
   "# id": INVALID :)
-  "# envtype": "INVALID",
-  "# path": "INVALID",
+  "? envtype": "INVALID",
 
   "# requiredKey": "" //there should be a comma here
   "# deep": { //also, no comments are allowed in json files
@@ -10,5 +11,5 @@
       "? asWell": "otherValue"
     }
   },
-  "# arr": []
+  "? arr": []
 }

@@ -1,13 +1,7 @@
 {
-  "id": "env2",
-  "envtype": "production",
-  "path": "/some/random/path",
+  "_path": "/some/random/path",
 
-  "requiredKey": "value2",
-  "deep": {
-    "key": {
-      "supported": ":)"
-    }
-  },
-  "arr": []
+  "id": "env2",
+
+  "requiredKey": "value2"
 }
