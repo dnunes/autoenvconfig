@@ -25,7 +25,7 @@ The simplest way to install this package is using [npm](http://www.npmjs.com/):
 $ npm i AutoEnvConfig
 ```
 
-You can also manually download the [latest release](https://github.com/dnunes/autoenvconfig/zipball/master) from [our project page](http://dnunes.com/autoenvconfig/) or any release from [our GitHub repository](https://github.com/dnunes/autoenvconfig/) on the [releases page](https://github.com/dnunes/autoenvconfig/releases/).
+You can also manually download any release from [our GitHub repository](https://github.com/dnunes/autoenvconfig/) on the [releases page](https://github.com/dnunes/autoenvconfig/releases/) or try the [latest stable source](https://github.com/dnunes/autoenvconfig/zipball/master). The links and info are also available on [the project page](http://dnunes.com/autoenvconfig/).
 
 
 ## <a id="quickstart">Quick Start Guide</a>
