@@ -1,4 +1,4 @@
-autoenvconfig
+AutoEnvConfig
 =============
 ### Environment config that Just Works™!
 
