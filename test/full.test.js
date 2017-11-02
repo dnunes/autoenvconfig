@@ -1,27 +1,24 @@
 /* global before, afterEach, after, describe, it */
-'use strict';
-
 const
-  rewire = require('rewire')
-, expect = require('chai').expect
+  expect = require('chai').expect
 , sinon = require('sinon')
 ;
 
 
 
 //### Module to be tested
-let AutoEnvConfig = rewire('../lib/AutoEnvConfig.js');
-
-
+let AutoEnvConfig = require('../lib/publicInterface');
 
 //### Setup, mocks and cleanup
 const
   fs = require('fs')
-, path = require('path');
+, path = require('path')
+, AutoEnvConfigClass = require('../lib/AutoEnvConfig')
+;
+
 
 let
-  sandbox,
-  AutoEnvConfigClass
+  sandbox
 ;
 
 let leftoverFiles = [], replaceFiles = {};
@@ -31,8 +28,7 @@ before(() => {
   let mockRootPath = __dirname;
   let mockSearchPath = path.resolve(mockRootPath, 'envs');
 
-  let _ = AutoEnvConfig.__get__('_');
-  AutoEnvConfigClass = AutoEnvConfig.__get__('AutoEnvConfig');
+  let _ = require('../lib/helpers');
   _.rootPath = mockRootPath; //override search path
   _.envsPath = mockSearchPath; //override search path
 
@@ -54,7 +50,7 @@ before(() => {
     let content = origReadFileSync(filepath, encoding);
 
     //if it's the right file, let's replace the path to the current one
-    if (filename == 'magic.json') {
+    if (filename === 'magic.json') {
       content = content.replace('%curpath%', JSON.stringify(mockRootPath));
     }
     return content;
@@ -67,8 +63,10 @@ afterEach(() => {
   //clear replace files list
   replaceFiles = {};
   //remove leftovers
-  leftoverFiles.forEach((file) => fs.unlinkSync(file));
-  leftoverFiles = [];
+  if (leftoverFiles.length) {
+    leftoverFiles.forEach((file) => fs.unlinkSync(file));
+    leftoverFiles = [];
+  }
   //reset all internal state
   AutoEnvConfig._reset();
 });
@@ -163,23 +161,23 @@ describe('Load Error Handling', function() {
 describe('Specific Loading', function() {
   it('"module.load(name)" should load <name>', function () {
     let specificInstance = AutoEnvConfig.load('env1');
-    let specificKey      = specificInstance.get('requiredKey');
+    let specificKey = specificInstance.get('requiredKey');
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificKey).to.be.equal('value1');
   });
 
   it('"module.load(name.json)" should load <name>', function () {
     let specificInstance = AutoEnvConfig.load('env1.json');
-    let specificKey      = specificInstance.get('requiredKey');
+    let specificKey = specificInstance.get('requiredKey');
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificKey).to.be.equal('value1');
   });
 
   it('"instance.load(name)" should load <name>', function () {
     let specificInstance1 = AutoEnvConfig.load('env1');
-    let specificKey1      = specificInstance1.get('requiredKey');
+    let specificKey1 = specificInstance1.get('requiredKey');
     let specificInstance2 = specificInstance1.load('env2');
-    let specificKey2      = specificInstance2.get('requiredKey');
+    let specificKey2 = specificInstance2.get('requiredKey');
     expect(specificInstance1).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance2).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance1).to.not.be.equal(specificInstance2);
@@ -201,7 +199,7 @@ describe('Singleton-by-default behavior', function() {
     //load. internall cache should return the same instance
     let specificInstanceCopy = AutoEnvConfig.load('env1');
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
-    expect(specificKeyCopy).to.be.equal('set_by_code');
+    expect(specificKeyCopy).to.be.equal(specificKey);
   });
 
   it('will reuse the same instance when two IDs resolve to the same env file', function () {
@@ -243,7 +241,7 @@ describe('Singleton-by-default behavior', function() {
 describe('Magic Loading', function() {
   it('"module.load()" should use <default>', function () {
     let magicInstance = AutoEnvConfig.load();
-    let magicKey      = magicInstance.get('requiredKey');
+    let magicKey = magicInstance.get('requiredKey');
     expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicKey).to.be.equal('magic');
   });
@@ -260,9 +258,9 @@ describe('Magic Loading', function() {
 
   it('"module.load()" should use <default> even after "module.load(name)"', function () {
     let specificInstance = AutoEnvConfig.load('env1');
-    let specificKey      = specificInstance.get('requiredKey');
-    let magicInstance    = AutoEnvConfig.load();
-    let magicKey         = magicInstance.get('requiredKey');
+    let specificKey = specificInstance.get('requiredKey');
+    let magicInstance = AutoEnvConfig.load();
+    let magicKey = magicInstance.get('requiredKey');
     expect(magicInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicInstance).to.not.be.equal(specificInstance);
@@ -270,9 +268,12 @@ describe('Magic Loading', function() {
     expect(magicKey).to.be.equal('magic');
   });
 
+  //this is really controversional and sometimes not that straightforward
+  //I find it useful for quick tests with other envs config simply changing
+  //the initial (or adding one) AutoEnvConfig.load() to AutoEnvConfig.load('env')
   it('"module.get" should use <name> after "module.load(name)"', function () {
     let specificInstance = AutoEnvConfig.load('env1');
-    let magicKey         = AutoEnvConfig.get("requiredKey");
+    let magicKey = AutoEnvConfig.get('requiredKey');
     expect(specificInstance).to.be.instanceof(AutoEnvConfigClass);
     expect(magicKey).to.be.equal('value1');
   });
@@ -281,30 +282,30 @@ describe('Magic Loading', function() {
 
 describe('Instance Load and Magic Load equivalence', function() {
   it('"module.load()" object should be the same as "module.load(defaultEnv)" object', function () {
-    let magicInstance    = AutoEnvConfig.load();
+    let magicInstance = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('magic');
     expect(magicInstance).to.be.equal(specificInstance);
   });
   it('"module.has" should be the same as "instance.has"', function () {
-    let magicInstance    = AutoEnvConfig.load();
+    let magicInstance = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('env1');
     expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.has).to.be.equal(specificInstance.has);
   });
   it('"module.get" should be the same as "instance.get"', function () {
-    let magicInstance    = AutoEnvConfig.load();
+    let magicInstance = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('env1');
     expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.get).to.be.equal(specificInstance.get);
   });
   it('"module.set" should be the same as "instance.set"', function () {
-    let magicInstance    = AutoEnvConfig.load();
+    let magicInstance = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('env1');
     expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.set).to.be.equal(specificInstance.set);
   });
   it('"module.persist" should be the same as "instance.persist"', function () {
-    let magicInstance    = AutoEnvConfig.load();
+    let magicInstance = AutoEnvConfig.load();
     let specificInstance = AutoEnvConfig.load('env1');
     expect(magicInstance).to.not.be.equal(specificInstance);
     expect(magicInstance.persist).to.be.equal(specificInstance.persist);
@@ -392,7 +393,7 @@ describe('Persistence Files', function() {
     leftoverFiles = ['specificPath.persist.json'];
   });
 
-  it('NOT create a persistence file when persistence is disabled', function () {
+  it('does NOT create a persistence file when persistence is disabled', function () {
     AutoEnvConfig.load('env1');
     expect(fs.existsSync('test/envs/env1.persist.json')).to.be.false;
   });
@@ -400,7 +401,19 @@ describe('Persistence Files', function() {
 
 
 describe('Global and Instance Persistence settings', function() {
-  it('disabling persistence on global setting should also disable it on Magic Instance', function () {
+  it('can disable global persistence setting without affecting Magic Instance', function () {
+    let fn = function () {
+      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.set('requiredKey', 'ok');
+      AutoEnvConfig.persist('requiredKey', 'ok');
+      AutoEnvConfig.disablePersistence(false);
+      AutoEnvConfig.persist('requiredKey', 'ok');
+    };
+    expect(fn).to.not.throw();
+    leftoverFiles = ['test/envs/magic.persist.json'];
+  });
+
+  it('disable persistence on Magic Instance if the global persistence is disabled', function () {
     let fn = function () {
       AutoEnvConfig.enablePersistence();
       AutoEnvConfig.set('requiredKey', 'ok');
@@ -413,19 +426,7 @@ describe('Global and Instance Persistence settings', function() {
     leftoverFiles = ['test/envs/magic.persist.json'];
   });
 
-  it('you can also disable global persistence setting without affecting Magic Instance', function () {
-    let fn = function () {
-      AutoEnvConfig.enablePersistence();
-      AutoEnvConfig.set('requiredKey', 'ok');
-      AutoEnvConfig.persist('requiredKey', 'ok');
-      AutoEnvConfig.disablePersistence(false);
-      AutoEnvConfig.persist('requiredKey', 'ok');
-    };
-    expect(fn).to.not.throw();
-    leftoverFiles = ['test/envs/magic.persist.json'];
-  });
-
-  it('do NOT load persisted data when persistence is disabled', function () {
+  it('does NOT load persisted data when persistence is disabled', function () {
     AutoEnvConfig.load('env_persist_existing');
     let specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('not_loaded');

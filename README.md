@@ -10,7 +10,7 @@ Stop worrying about the hassle of **loading environment config files everywhere*
 
 * **Blazingly fast**: it caches everything it can, loads your files only once and check your schema on load, not on usage;
 * **No extra configuration needed**: this package follows the idea of _convention over configuration_, so it keeps the required environment files to a minimum and there is nothing to thinker with before start using it;
-* **Never out of sync**: when loading the environment configuration file, it checks the schema for *missing AND for extra keys*, alerting you when you are missing some key in your config or in your schema file;
+* **Never out of sync**: when loading the environment configuration file, it checks the schema for *missing* or *extra* keys, alerting you when you are missing some key in your config or in your schema file;
 * **Auto load of the right config file**: you can set the root path of the project in the environment config file and it will load automatically;
 * **Possible local [eventual persistence](#eventualpersistence)** (beta): you can overwrite data by code and have it persisted across restarts (or even deploys!) whenever needed. Things like general settings' dashboard for a small project gets really fast and easy (look, ma!, no databases!). You can backup your persistence file whenever you need or simply merge it with your env config periodically to make changes definitive.
 

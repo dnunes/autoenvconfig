@@ -4,7 +4,7 @@
   "description": "Environment config that Just Works™!",
   "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "http://dnunes.com/autoenvconfig/",
-  "main": "index.js",
+  "main": "lib/publicInterface.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha -c",
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -c",
