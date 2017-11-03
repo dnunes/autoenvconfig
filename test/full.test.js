@@ -1,6 +1,6 @@
 'use strict';
 
-/* global before, afterEach, after, describe, it, Promise */
+/* global before, afterEach, after, describe, it */
 const
   expect = require('chai').expect
 , sinon = require('sinon')
@@ -17,11 +17,6 @@ const AutoEnvConfig = require('../lib/publicInterface');
 let sandbox;
 let leftoverFiles = [];
 let replaceFiles = {};
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 
 //# Setup
 before(() => {
@@ -59,17 +54,12 @@ before(() => {
 });
 
 //# Reset on each test
-afterEach(async () => {
+afterEach(() => {
   //clear replace files list
   replaceFiles = {};
-  //remove leftovers and "sleep" a tiny bit
   if (leftoverFiles.length) {
     leftoverFiles.forEach((file) => fs.unlinkSync(file));
     leftoverFiles = [];
-    //the sequential removal/recreation of files in Windows give me nasty bugs
-    //on the tests, so I need a small "sleep" between calls that mess with the
-    //same files. usually only some persistence tests will hit this code.
-    await sleep(50); //sorry about this.
   }
   //reset all internal state
   AutoEnvConfig._reset();
@@ -417,6 +407,12 @@ describe('Global and Instance Persistence settings', function() {
     leftoverFiles = ['test/envs/magic.persist.json'];
   });
 
+  it('does NOT load persisted data when persistence is disabled', function () {
+    AutoEnvConfig.load('env_persist_existing');
+    let specificKey = AutoEnvConfig.get('requiredKey');
+    expect(specificKey).to.be.equal('not_loaded');
+  });
+
   it('can disable global persistence setting without affecting Magic Instance', function () {
     let fn = function () {
       AutoEnvConfig.enablePersistence();
@@ -427,12 +423,6 @@ describe('Global and Instance Persistence settings', function() {
     };
     expect(fn).to.not.throw();
     leftoverFiles = ['test/envs/magic.persist.json'];
-  });
-
-  it('does NOT load persisted data when persistence is disabled', function () {
-    AutoEnvConfig.load('env_persist_existing');
-    let specificKey = AutoEnvConfig.get('requiredKey');
-    expect(specificKey).to.be.equal('not_loaded');
   });
 
   it('load persisted data on load when persistence is globally enabled', function () {
