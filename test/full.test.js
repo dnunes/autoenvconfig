@@ -1,27 +1,25 @@
-/* global before, afterEach, after, describe, it */
+/* global before, afterEach, after, describe, it, Promise */
 const
   expect = require('chai').expect
 , sinon = require('sinon')
+, fs = require('fs')
+, path = require('path')
 ;
-
-
 
 //### Module to be tested
-let AutoEnvConfig = require('../lib/publicInterface');
+const AutoEnvConfigClass = require('../lib/AutoEnvConfig');
+const AutoEnvConfig = require('../lib/publicInterface');
+
 
 //### Setup, mocks and cleanup
-const
-  fs = require('fs')
-, path = require('path')
-, AutoEnvConfigClass = require('../lib/AutoEnvConfig')
-;
+let sandbox;
+let leftoverFiles = [];
+let replaceFiles = {};
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-let
-  sandbox
-;
-
-let leftoverFiles = [], replaceFiles = {};
 
 //# Setup
 before(() => {
@@ -59,13 +57,17 @@ before(() => {
 });
 
 //# Reset on each test
-afterEach(() => {
+afterEach(async () => {
   //clear replace files list
   replaceFiles = {};
-  //remove leftovers
+  //remove leftovers and "sleep" a tiny bit
   if (leftoverFiles.length) {
     leftoverFiles.forEach((file) => fs.unlinkSync(file));
     leftoverFiles = [];
+    //the sequential removal/recreation of files in Windows give me nasty bugs
+    //on the tests, so I need a small "sleep" between calls that mess with the
+    //same files. usually only some persistence tests will hit this code.
+    await sleep(50); //sorry about this.
   }
   //reset all internal state
   AutoEnvConfig._reset();
@@ -75,7 +77,6 @@ afterEach(() => {
 after(() => {
   sandbox.restore();
 });
-
 
 
 //### Tests :)
@@ -401,19 +402,7 @@ describe('Persistence Files', function() {
 
 
 describe('Global and Instance Persistence settings', function() {
-  it('can disable global persistence setting without affecting Magic Instance', function () {
-    let fn = function () {
-      AutoEnvConfig.enablePersistence();
-      AutoEnvConfig.set('requiredKey', 'ok');
-      AutoEnvConfig.persist('requiredKey', 'ok');
-      AutoEnvConfig.disablePersistence(false);
-      AutoEnvConfig.persist('requiredKey', 'ok');
-    };
-    expect(fn).to.not.throw();
-    leftoverFiles = ['test/envs/magic.persist.json'];
-  });
-
-  it('disable persistence on Magic Instance if the global persistence is disabled', function () {
+  it('disables persistence on Magic Instance if the global persistence is disabled', function () {
     let fn = function () {
       AutoEnvConfig.enablePersistence();
       AutoEnvConfig.set('requiredKey', 'ok');
@@ -423,6 +412,18 @@ describe('Global and Instance Persistence settings', function() {
       AutoEnvConfig.persist('requiredKey', 'ok');
     };
     expect(fn).to.throw('The current instance of AutoEnvConfig was not set to have persistence activated!');
+    leftoverFiles = ['test/envs/magic.persist.json'];
+  });
+
+  it('can disable global persistence setting without affecting Magic Instance', function () {
+    let fn = function () {
+      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.set('requiredKey', 'ok');
+      AutoEnvConfig.persist('requiredKey', 'ok');
+      AutoEnvConfig.disablePersistence(false);
+      AutoEnvConfig.persist('requiredKey', 'ok');
+    };
+    expect(fn).to.not.throw();
     leftoverFiles = ['test/envs/magic.persist.json'];
   });
 
