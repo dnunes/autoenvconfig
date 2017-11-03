@@ -1,3 +1,5 @@
+'use strict';
+
 /* global before, afterEach, after, describe, it, Promise */
 const
   expect = require('chai').expect
