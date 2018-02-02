@@ -4,7 +4,7 @@ AutoEnvConfig
 
 Stop worrying about the hassle of **loading environment config files everywhere**, **config files with missing entries** or **schemas that gets old when you forget to add a new config key to it**.
 
-**AutoEnvConfig** is a fully-tested* no-nonsense no-dependencies package to help you keep your ever expanding project under control. _*(bear with me on the beta features)_
+**AutoEnvConfig** is a fully-tested\*, no-nonsense, no-dependencies package to help you keep your ever expanding project under control. _\*(bear with me on the beta features)_
 
 **AutoEnvConfig** was designed with simple but very powerful goals:
 
