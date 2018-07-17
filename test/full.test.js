@@ -28,12 +28,10 @@ before(() => {
   _.envsPath = mockSearchPath; //override search path
 
   sandbox = sinon.sandbox.create();
-
   //This stub allows us to force loading of specific files with special
   //configurations without changing this module's code for consistent testing.
-  let origReadFileSync = fs.readFileSync;
-
-  let stubbedReadFileSync = function (filepath, encoding) {
+  let origLoadReference = _.loadReference;
+  let stubbedLoadReference = function (filepath) {
     let pathparts = filepath.split(path.sep);
     let filename = pathparts.pop();
     if (replaceFiles[filename]) { //use invalid or different files for tests
@@ -42,15 +40,12 @@ before(() => {
     pathparts.push(filename);
     filepath = pathparts.join(path.sep);
 
-    let content = origReadFileSync(filepath, encoding);
-
+    let content = origLoadReference(filepath);
     //if it's the right file, let's replace the path to the current one
-    if (filename === 'magic.json') {
-      content = content.replace('%curpath%', JSON.stringify(mockRootPath));
-    }
+    if (content && filename === 'magic.json') { content._path = mockRootPath; }
     return content;
   };
-  sandbox.stub(fs, 'readFileSync').callsFake(stubbedReadFileSync);
+  sandbox.stub(_, 'loadReference').callsFake(stubbedLoadReference);
 });
 
 //# Reset on each test

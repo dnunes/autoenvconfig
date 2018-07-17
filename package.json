@@ -1,8 +1,8 @@
 {
   "name": "autoenvconfig",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Environment config that Just Works™!",
-  "author": "Diego Nunes <work@dnunes.com> (http://dnunes.com)",
+  "author": "diego nunes <work@dnunes.com> (http://dnunes.com)",
   "homepage": "http://dnunes.com/autoenvconfig/",
   "main": "lib/publicInterface.js",
   "scripts": {
