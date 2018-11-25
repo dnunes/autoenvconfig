@@ -110,6 +110,12 @@ describe('Load Error Handling', function() {
     expect(fn).to.throw(expectedErrMessage);
   });
 
+  it('throws exception when specified env is missing', function () {
+    let fn = function () { AutoEnvConfig.load('error_nonExisting'); };
+    let expectedErrMessage = 'The specified config file "error_nonExisting" does not exist';
+    expect(fn).to.throw(expectedErrMessage);
+  });
+
   it('"module.load" returns false when there is no matching env path', function () {
     replaceFiles = {'magic.json': 'env1.json'};
     let magicInstance = AutoEnvConfig.load();
