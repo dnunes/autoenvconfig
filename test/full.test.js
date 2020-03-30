@@ -134,7 +134,7 @@ describe('Load Error Handling', function() {
 
   it('throws exception when it cannot create persistence file', function () {
     let fn = function () {
-      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.enableDefaultPersistence();
       AutoEnvConfig.load('env_persist_cantCreate');
     };
     let expectedErrMessage = 'The persistence file "/invalid/path.json" does not exists and could not be created';
@@ -143,7 +143,7 @@ describe('Load Error Handling', function() {
 
   it('throws exception when the persistence file content is invalid', function () {
     let fn = function () {
-      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.enableDefaultPersistence();
       AutoEnvConfig.load('env_persist_invalid');
     };
     let expectedErrMessage = 'There is a syntax error in your persistence file';
@@ -359,7 +359,7 @@ describe('Methods', function() {
   });
   it('"instance.persist(key, value)" should throw when called in an instance created with persistence but disabled later on', function () {
     let fn = function () {
-      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.enableDefaultPersistence();
       let specificInstance = AutoEnvConfig.load('env1');
       specificInstance.set('requiredKey', 'ok');
       specificInstance.persist('requiredKey', 'ok');
@@ -374,14 +374,14 @@ describe('Methods', function() {
 
 describe('Persistence Files', function() {
   it('create a persistence file in default location when persistence is enabled and no special settings are in place', function () {
-    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.enableDefaultPersistence();
     AutoEnvConfig.load('env1');
     expect(fs.readFileSync('test/envs/env1.persist.json').toString()).to.be.equal('{}');
     leftoverFiles = ['test/envs/env1.persist.json'];
   });
 
   it('create a persistence file in the specified location when persistence is enabled with a specific path', function () {
-    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.enableDefaultPersistence();
     AutoEnvConfig.load('env_persist_specific');
     expect(fs.readFileSync('specificPath.persist.json').toString()).to.be.equal('{}');
     leftoverFiles = ['specificPath.persist.json'];
@@ -397,11 +397,11 @@ describe('Persistence Files', function() {
 describe('Global and Instance Persistence settings', function() {
   it('disables persistence on Magic Instance if the global persistence is disabled', function () {
     let fn = function () {
-      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.enableDefaultPersistence();
       AutoEnvConfig.set('requiredKey', 'ok');
       AutoEnvConfig.persist('requiredKey', 'ok');
       //disabled globally. also disabled it on magic instance.
-      AutoEnvConfig.disablePersistence();
+      AutoEnvConfig.disableDefaultPersistence();
       AutoEnvConfig.persist('requiredKey', 'ok');
     };
     expect(fn).to.throw('The current instance of AutoEnvConfig was not set to have persistence activated!');
@@ -416,10 +416,10 @@ describe('Global and Instance Persistence settings', function() {
 
   it('can disable global persistence setting without affecting Magic Instance', function () {
     let fn = function () {
-      AutoEnvConfig.enablePersistence();
+      AutoEnvConfig.enableDefaultPersistence();
       AutoEnvConfig.set('requiredKey', 'ok');
       AutoEnvConfig.persist('requiredKey', 'ok');
-      AutoEnvConfig.disablePersistence(false);
+      AutoEnvConfig.disableDefaultPersistence(false);
       AutoEnvConfig.persist('requiredKey', 'ok');
     };
     expect(fn).to.not.throw();
@@ -427,7 +427,7 @@ describe('Global and Instance Persistence settings', function() {
   });
 
   it('load persisted data on load when persistence is globally enabled', function () {
-    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.enableDefaultPersistence();
     AutoEnvConfig.load('env_persist_existing');
     let specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('loaded_from_persistence');
@@ -438,30 +438,34 @@ describe('Global and Instance Persistence settings', function() {
     let specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('not_loaded');
     //now enable persistence and retry
-    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.enableDefaultPersistence();
     specificKey = AutoEnvConfig.get('requiredKey');
     expect(specificKey).to.be.equal('loaded_from_persistence');
   });
 
-  it('enable persistence in an instance without overwriting current in-memory config', function () {
+  it('enable persistence in an instance without overwriting current in-memory data', function () {
     let specificInstance = AutoEnvConfig.load('env_persist_existing');
-    specificInstance.enablePersistence(); //overwrite
     let specificKey = specificInstance.get('requiredKey');
+    expect(specificKey).to.be.equal('not_loaded');
+    specificInstance.enablePersistence(); //overwrite from cache
+    specificKey = specificInstance.get('requiredKey');
     expect(specificKey).to.be.equal('loaded_from_persistence');
-    //load new instance and enable persistence without override
+    //load new instance and enable persistence without overriding data
     let specificInstanceCopy = AutoEnvConfig.load('env_persist_existing', 'forceNew');
-    specificInstanceCopy.enablePersistence(120, false); //don't overwrite
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
+    expect(specificKeyCopy).to.be.equal('not_loaded');
+    specificInstanceCopy.enablePersistence(false, false); //do not override memory data
+    specificKeyCopy = specificInstanceCopy.get('requiredKey');
     expect(specificKeyCopy).to.be.equal('not_loaded');
   });
 
   it('do NOT persist data when using "set" method even with persistence enabled', function () {
-    AutoEnvConfig.enablePersistence();
+    AutoEnvConfig.enableDefaultPersistence();
     let specificInstance = AutoEnvConfig.load('env_persist_existing');
     //check low level implementation as well.
     var internalWriteCall = sinon.spy(specificInstance.eventualPersistence, '_writeToDisk');
     let specificKey = specificInstance.get('requiredKey');
-    expect(specificInstance.get('requiredKey')).to.be.equal('loaded_from_persistence');
+    expect(specificKey).to.be.equal('loaded_from_persistence');
     //persistence activated, but replace in-memory only!
     specificInstance.set('requiredKey', 'replaced_by_code');
     //check that the in-memory value was changed
@@ -472,7 +476,7 @@ describe('Global and Instance Persistence settings', function() {
     expect(internalWriteCall.callCount).to.be.equal(0);
     //load new instance, which will re-read the persistence data
     let specificInstanceCopy = AutoEnvConfig.load('env_persist_existing', 'forceNew');
-    specificInstanceCopy.enablePersistence(120, false); //don't overwrite
+    specificInstanceCopy.enablePersistence(false, false); //don't overwrite
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
     //it should not be changed!
     expect(specificKeyCopy).to.be.equal('loaded_from_persistence');
