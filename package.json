@@ -6,7 +6,7 @@
   "homepage": "http://dnunes.com/autoenvconfig/",
   "main": "lib/publicInterface.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha -c",
+    "test": "npx mocha -c",
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -c",
     "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly && cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js"
   },

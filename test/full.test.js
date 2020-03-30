@@ -12,11 +12,11 @@ const
 const AutoEnvConfigClass = require('../lib/AutoEnvConfig');
 const AutoEnvConfig = require('../lib/publicInterface');
 
-
 //### Setup, mocks and cleanup
 let sandbox;
 let leftoverFiles = [];
 let replaceFiles = {};
+let _persistedInstances = [];
 
 //# Setup
 before(() => {
@@ -58,12 +58,13 @@ afterEach(() => {
   }
   //reset all internal state
   AutoEnvConfig._reset();
+  if (_persistedInstances.length) {
+    _persistedInstances.forEach((instance) => instance.disablePersistence());
+  }
 });
 
 //# Cleanup
-after(() => {
-  sandbox.restore();
-});
+after(() => { sandbox.restore(); });
 
 
 //### Tests :)
@@ -457,6 +458,7 @@ describe('Global and Instance Persistence settings', function() {
     specificInstanceCopy.enablePersistence(false, false); //do not override memory data
     specificKeyCopy = specificInstanceCopy.get('requiredKey');
     expect(specificKeyCopy).to.be.equal('not_loaded');
+    _persistedInstances = [specificInstance, specificInstanceCopy];
   });
 
   it('do NOT persist data when using "set" method even with persistence enabled', function () {
@@ -480,5 +482,6 @@ describe('Global and Instance Persistence settings', function() {
     let specificKeyCopy = specificInstanceCopy.get('requiredKey');
     //it should not be changed!
     expect(specificKeyCopy).to.be.equal('loaded_from_persistence');
+    _persistedInstances = [specificInstance, specificInstanceCopy];
   });
 });
