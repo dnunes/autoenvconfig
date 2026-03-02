@@ -30,7 +30,7 @@ before(() => {
   sandbox = sinon.sandbox.create();
   //This stub allows us to force loading of specific files with special
   //configurations without changing this module's code for consistent testing.
-  let origLoadReference = _.loadReference;
+  let origLoadReference = _.loadRef;
   let stubbedLoadReference = function (filepath) {
     let pathparts = filepath.split(path.sep);
     let filename = pathparts.pop();
